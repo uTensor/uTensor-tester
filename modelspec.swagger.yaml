@@ -1,0 +1,109 @@
+openapi: "3.0.0"
+info:
+  description: "This is the contract for embedded tensor processing tests"
+  version: "1.0.0"
+  title: "uTensor-tester"
+  contact:
+    email: "michael.bartling15@gmail.com"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+tags:
+- name: "Embedded Testing"
+  description: "Client server model for launching and managing embedded tests"
+  externalDocs:
+    description: "Find out more"
+    url: "https://github.com/utensor/utensor-tester"
+
+servers:
+  - url: https://testlab.utensor.ai/v1
+
+components:
+  schemas:
+# Test schema
+    TestReturnCode:
+      type: "integer"
+    TestResponse:
+      type: "object"
+      properties:
+        returnCode:
+          $ref: "#/components/schemas/TestReturnCode"
+        log:
+          type: "string"
+    
+# Data objects
+    LinearBuffer:
+      type: "object"
+      properties:
+        data:
+          type: "string"
+          format: "binary"
+        length:
+          type: "integer"
+    LinearArray:
+      type: "object"
+      properties:
+        data:
+          type: "array"
+          items: 
+            type: "number"
+        length:
+          type: "integer"
+    TensorDimensions:
+      type: "array"
+      items:
+        type: "integer"
+    TensorType:
+      type: "string"
+      enum: [uint8, int8, quint8, qint8, uint16, int16, quint16, qint16, uint32, int32, quint32, qint32, float]
+    TensorReference:
+      type: "string"
+    Tensor:
+      type: "object"
+      required: 
+        - data
+        - dimensions
+        - type
+        - name
+      properties:
+        data:
+          $ref: "#/components/schemas/LinearArray"
+        dimensions:
+          $ref: "#/components/schemas/TensorDimensions"
+        type:
+          $ref: "#/components/schemas/TensorType"
+        name:
+          type: "string"
+        attrs: # Havent decided on these yet
+          type: "object"
+    TensorIOPair:
+      type: "object"
+      required: 
+        - paramId
+        - tensor
+      properties:
+        paramId:
+          type: "string"
+        tensor:
+          $ref: "#/components/schemas/Tensor"
+    Operator:
+      # Source operator only has outputs
+      # Sink operator only has inputs
+      # process ops have both IO
+      type: "object"
+      required: 
+        - name
+      properties:
+        name:
+          type: "string"
+        inputs:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/TensorIOPair"
+        outputs:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/TensorIOPair"
+externalDocs:
+  description: "Find out more about Swagger"
+  url: "http://swagger.io"
