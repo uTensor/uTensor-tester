@@ -110,17 +110,21 @@ components:
           type: "array"
           items: 
             type: "number"
+          example: [1,2,3,4]
         length:
           type: "integer"
+          example: "4"
     TensorDimensions:
       type: "array"
       items:
         type: "integer"
+        example: [2, 2]
     TensorType:
       type: "string"
       enum: [uint8, int8, quint8, qint8, uint16, int16, quint16, qint16, uint32, int32, quint32, qint32, float]
     TensorReference:
       type: "string"
+      example: "x"
     Tensor:
       type: "object"
       required: 
@@ -137,6 +141,7 @@ components:
           $ref: "#/components/schemas/TensorType"
         name:
           type: "string"
+          example: "x"
         attrs: # Havent decided on these yet
           type: "object"
     TensorIOPair:
@@ -159,6 +164,7 @@ components:
       properties:
         name:
           type: "string"
+          example: "NoOp"
         inputs:
           type: "array"
           items:
