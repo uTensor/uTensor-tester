@@ -18,6 +18,46 @@ tags:
 servers:
   - url: https://testlab.utensor.ai/v1
 
+paths:
+  /generate/test_group_code/{env}/{platform}:
+    post:
+      tags:
+      - "generate"
+      summary: "Request main.cpp given sequence of tests"
+      description: "TODO"
+      parameters: 
+        - in: path
+          name: env
+          required: true
+          schema:
+            type: string
+            enum: [tflm, utensor]
+          description: Target tensor processing environment
+        - in: path
+          name: platform
+          required: true
+          schema:
+            type: string
+            enum: [linux, mbed, arduino, generic]
+      requestBody:
+        description: "sequence of tests"
+        required: true
+        content:
+          'application/json':
+            schema:
+              $ref: "#/components/schemas/TestGroup"
+      # Need to figure out how to return as a file, Open API 3.0 is different
+      responses:
+        204:
+          description: "Successfully generated"
+        400:
+          description: "Given URL is not accessible or the long polling channel already exists"
+        401:
+          description: "Unauthorized"
+        403:
+          description: "Forbidden, the authorization token used is not an API key"
+        415:
+          description: "Unsupported Medial Type"
 components:
   schemas:
 # Test schema
@@ -25,12 +65,35 @@ components:
       type: "integer"
     TestResponse:
       type: "object"
+      required:
+        - id
+        - returnCode
       properties:
+        id:
+          type: "string"
         returnCode:
           $ref: "#/components/schemas/TestReturnCode"
         log:
           type: "string"
-    
+    TestCase:
+      type: "object"
+      properties:
+        name: 
+          type: "string"
+        ops:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/Operator"
+    TestGroup:
+      type: "object"
+      properties:
+        name:
+          type: "string"
+        testCases:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/TestCase"
+            
 # Data objects
     LinearBuffer:
       type: "object"
